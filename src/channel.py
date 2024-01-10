@@ -2,45 +2,68 @@ import json
 import os
 from googleapiclient.discovery import build
 
+
 class Channel:
     """Класс для ютуб-канала"""
     api_key: str = os.getenv('API_KEY')
     youtube = build('youtube', 'v3', developerKey='AIzaSyBBCyxsCISj_M9frARK5CwxF4XW6Q4CSlo')
+
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
 
-        @classmethod
-        def get_service(cls):
-            return build('youtube', 'v3', developerKey=cls.api_key)
+    def __str__(self):
+        return f'{self.title}({self.url})'
 
-        @property
-        def title(self):
-            return self.print_info()["items"][0]["snippet"]["title"]
+    def __add__(self, other):
+        return int(self.subs) + int(other.subs)
 
-        @property
-        def description(self):
-            return self.print_info()["items"][0]["snippet"]["description"]
+    def __sub__(self, other):
+        return int(self.subs) - int(other.subs)
 
-        @property
-        def url(self):
-            return f'https://www.youtube.com/channel/{self.__channel_id}'
+    def __gt__(self, other):
+        return int(self.subs) > int(other.subs)
 
-        @property
-        def subs(self):
-            return self.print_info()["items"][0]["statistics"]["subscriberCount"]
+    def __ge__(self, other):
+        return int(self.subs) >= int(other.subs)
 
-        @property
-        def video_count(self):
-            return self.print_info()["items"][0]["statistics"]["videoCount"]
+    def __lt__(self, other):
+        return int(self.subs) < int(other.subs)
 
-        @property
-        def viewers(self):
-            return self.print_info()["items"][0]["statistics"]["viewCount"]
+    def __le__(self, other):
+        return int(self.subs) <= int(other.subs)
 
-        @property
-        def channel_id(self):
-            return self.__channel_id
+    @classmethod
+    def get_service(cls):
+        return build('youtube', 'v3', developerKey=cls.api_key)
+
+    @property
+    def title(self):
+        return self.print_info()["items"][0]["snippet"]["title"]
+
+    @property
+    def description(self):
+        return self.print_info()["items"][0]["snippet"]["description"]
+
+    @property
+    def url(self):
+        return f'https://www.youtube.com/channel/{self.__channel_id}'
+
+    @property
+    def subs(self):
+        return self.print_info()["items"][0]["statistics"]["subscriberCount"]
+
+    @property
+    def video_count(self):
+        return self.print_info()["items"][0]["statistics"]["videoCount"]
+
+    @property
+    def viewers(self):
+        return self.print_info()["items"][0]["statistics"]["viewCount"]
+
+    @property
+    def channel_id(self):
+        return self.__channel_id
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
